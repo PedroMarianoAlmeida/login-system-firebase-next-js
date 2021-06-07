@@ -5,10 +5,14 @@ import Modal from '@material-ui/core/Modal';
 import Backdrop from '@material-ui/core/Backdrop';
 import Fade from '@material-ui/core/Fade';
 import Button from '@material-ui/core/Button';
+import React from 'react';
+import AppBar from '@material-ui/core/AppBar';
+import Tabs from '@material-ui/core/Tabs';
+import Tab from '@material-ui/core/Tab';
+import Typography from '@material-ui/core/Typography';
+import Box from '@material-ui/core/Box';
 
-import { useCreateUserWithEmailAndPassword } from 'react-firebase-hooks/auth';
-
-import { auth } from '../../../config/firebaseConfig';
+import SignInForm from './SignInForm';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -23,8 +27,45 @@ const useStyles = makeStyles((theme: Theme) =>
       boxShadow: theme.shadows[5],
       padding: theme.spacing(2, 4, 3),
     },
+    root: {
+      flexGrow: 1,
+      backgroundColor: theme.palette.background.paper,
+    },
   })
 );
+
+interface TabPanelProps {
+  children?: React.ReactNode;
+  index: any;
+  value: any;
+}
+
+function TabPanel(props: TabPanelProps) {
+  const { children, value, index, ...other } = props;
+
+  return (
+    <div
+      role="tabpanel"
+      hidden={value !== index}
+      id={`simple-tabpanel-${index}`}
+      aria-labelledby={`simple-tab-${index}`}
+      {...other}
+    >
+      {value === index && (
+        <Box p={3}>
+          <Typography>{children}</Typography>
+        </Box>
+      )}
+    </div>
+  );
+}
+
+function a11yProps(index: any) {
+  return {
+    id: `simple-tab-${index}`,
+    'aria-controls': `simple-tabpanel-${index}`,
+  };
+}
 
 export default function LoginSignInModal() {
   const classes = useStyles();
@@ -38,11 +79,11 @@ export default function LoginSignInModal() {
     setOpen(false);
   };
 
-  const [createUserWithEmailAndPassword, user, loading, error] =
-    useCreateUserWithEmailAndPassword(auth);
+  const [value, setValue] = React.useState(0);
 
-  const createAccount = () =>
-    createUserWithEmailAndPassword('email@gmail.com', 'password12345');
+  const handleChange = (event: React.ChangeEvent<{}>, newValue: number) => {
+    setValue(newValue);
+  };
 
   return (
     <div>
@@ -63,14 +104,22 @@ export default function LoginSignInModal() {
       >
         <Fade in={open}>
           <div className={classes.paper}>
-            <h2 id="transition-modal-title">Transition modal</h2>
-            <p id="transition-modal-description">
-              react-transition-group animates me.
-            </p>
-
-            <Button variant="contained" onClick={createAccount}>
-              Create Account
-            </Button>
+            <AppBar position="static">
+              <Tabs
+                value={value}
+                onChange={handleChange}
+                aria-label="simple tabs example"
+              >
+                <Tab label="Login" {...a11yProps(0)} />
+                <Tab label="Sign In" {...a11yProps(1)} />
+              </Tabs>
+            </AppBar>
+            <TabPanel value={value} index={0}>
+              Login Form
+            </TabPanel>
+            <TabPanel value={value} index={1}>
+              <SignInForm />
+            </TabPanel>
           </div>
         </Fade>
       </Modal>
