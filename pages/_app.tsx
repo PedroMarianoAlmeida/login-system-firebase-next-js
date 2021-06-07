@@ -4,7 +4,7 @@ import CssBaseline from '@material-ui/core/CssBaseline';
 import Container from '@material-ui/core/Container';
 import { makeStyles } from '@material-ui/core/styles';
 
-import LoginAppBar from '../src/lib/components/specific/LoginAppBar/LoginAppBar';
+import LoginAppBar from '../src/components/specific/LoginAppBar/LoginAppBar';
 
 const appBarHeight = '64px';
 
