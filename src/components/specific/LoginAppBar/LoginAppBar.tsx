@@ -1,11 +1,10 @@
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
-import Button from '@material-ui/core/Button';
 
 import { makeStyles } from '@material-ui/core/styles';
 
-import { signIn } from '../../../functions/authHandler';
+import LoginSignInModal from './LoginSignInModal';
 
 const LoginAppBar = ({ appBarHeight }) => {
   const useStyles = makeStyles({
@@ -23,17 +22,15 @@ const LoginAppBar = ({ appBarHeight }) => {
 
   const classes = useStyles();
 
-  const handleClick = () => signIn('test12345@gmail.com', 'test1234');
-
   return (
-    <AppBar className={classes.root}>
-      <Toolbar className={classes.menu}>
-        <Typography>Logo</Typography>
-        <Button variant="contained" onClick={handleClick}>
-          Login/Sign Up
-        </Button>
-      </Toolbar>
-    </AppBar>
+    <>
+      <AppBar className={classes.root}>
+        <Toolbar className={classes.menu}>
+          <Typography>Logo</Typography>
+          <LoginSignInModal />
+        </Toolbar>
+      </AppBar>
+    </>
   );
 };
 
