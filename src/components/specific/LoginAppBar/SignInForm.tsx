@@ -1,3 +1,5 @@
+import { useEffect, useRef } from 'react';
+
 import Typography from '@material-ui/core/Typography';
 import TextField from '@material-ui/core/TextField';
 import FormHelperText from '@material-ui/core/FormHelperText';
@@ -20,7 +22,7 @@ const validationSchema = Yup.object().shape({
     .required('Must enter a password'),
   confirmPassword: Yup.string()
     .min(4, 'Must be longer than 4 character')
-    .required('Must enter a password'),
+    .required('Must confirm the password'),
 });
 
 const useStyles = makeStyles((theme) => ({
@@ -31,6 +33,10 @@ const useStyles = makeStyles((theme) => ({
 
   button: {
     marginTop: theme.spacing(1),
+  },
+
+  hidden: {
+    display: 'none',
   },
 }));
 
@@ -43,14 +49,48 @@ const ValidationMessage = ({ touched, message }) => {
   );
 };
 
-const SignInForm = () => {
+const SignInForm = ({ setOpen }) => {
+  const clearModalButton = useRef(null);
+  const liberatingFormButton = useRef(null);
+
   const classes = useStyles();
 
   const [createUserWithEmailAndPassword, user, loading, error] =
     useCreateUserWithEmailAndPassword(auth);
 
-  const createAccount = () =>
-    createUserWithEmailAndPassword('email3@gmail.com', 'password12345');
+  const handleSubmit = (values, setSubmitting) => {
+    setSubmitting(true);
+
+    if (
+      JSON.stringify(values.password) !== JSON.stringify(values.confirmPassword)
+    ) {
+      values.confirmPassword = '';
+      setSubmitting(false);
+      return;
+    }
+
+    //This function trigger loading, that trigger the useEffect that trigger the hidden button on form
+    //That is the way I found to use Formik functions outside the Formik component, all this because this loading hook and not the usual async await and try catch structure
+    createUserWithEmailAndPassword(values.email, values.password);
+  };
+
+  const clearModal = (values, initialValues, setSubmitting, resetForm) => {
+    if (JSON.stringify(values) !== JSON.stringify(initialValues)) {
+      setSubmitting(false);
+      resetForm();
+      setOpen(false);
+      console.log('User Created');
+    }
+  };
+
+  useEffect(() => {
+    if (!loading) {
+      if (!error) {
+        clearModalButton.current.click();
+      }
+      liberatingFormButton.current.click();
+    }
+  }, [loading]);
 
   return (
     <>
@@ -62,15 +102,12 @@ const SignInForm = () => {
       <Formik
         initialValues={{ email: '', password: '', confirmPassword: '' }}
         validationSchema={validationSchema}
-        onSubmit={(values, { setSubmitting, resetForm }) => {
-          setSubmitting(true);
-          createUserWithEmailAndPassword(values.email, values.password);
-
-          resetForm();
-          setSubmitting(false);
+        onSubmit={(values, { setSubmitting }) => {
+          handleSubmit(values, setSubmitting);
         }}
       >
         {({
+          initialValues,
           values,
           errors,
           touched,
@@ -78,6 +115,8 @@ const SignInForm = () => {
           handleBlur,
           handleSubmit,
           isSubmitting,
+          setSubmitting,
+          resetForm,
         }) => (
           <form className={classes.form} onSubmit={handleSubmit}>
             <TextField
@@ -114,11 +153,19 @@ const SignInForm = () => {
               value={values.confirmPassword}
               onBlur={handleBlur}
               onChange={handleChange}
-              error={touched.confirmPassword && Boolean(errors.confirmPassword)}
+              error={
+                touched.confirmPassword &&
+                (values.confirmPassword !== values.password ||
+                  Boolean(errors.confirmPassword))
+              }
             />
             <ValidationMessage
               touched={touched.confirmPassword}
-              message={errors.confirmPassword}
+              message={
+                errors.confirmPassword ||
+                (values.confirmPassword !== values.password &&
+                  'Password should match')
+              }
             />
 
             <Button
@@ -129,6 +176,26 @@ const SignInForm = () => {
               disabled={isSubmitting}
             >
               Create Account
+            </Button>
+
+            <FormHelperText error>{error?.message}</FormHelperText>
+
+            <Button
+              className={classes.hidden}
+              onClick={() =>
+                clearModal(values, initialValues, setSubmitting, resetForm)
+              }
+              ref={clearModalButton}
+            >
+              Clear Modal (hidden)
+            </Button>
+
+            <Button
+              className={classes.hidden}
+              onClick={() => setSubmitting(false)}
+              ref={liberatingFormButton}
+            >
+              Liberating Form (hidden)
             </Button>
           </form>
         )}
