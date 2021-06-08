@@ -9,7 +9,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 
-import { useCreateUserWithEmailAndPassword } from 'react-firebase-hooks/auth';
+import { useSignInWithEmailAndPassword } from 'react-firebase-hooks/auth';
 
 import { auth } from '../../../config/firebaseConfig';
 
@@ -20,9 +20,6 @@ const validationSchema = Yup.object().shape({
   password: Yup.string()
     .min(6, 'Must be longer than 6 character')
     .required('Must enter a password'),
-  confirmPassword: Yup.string()
-    .min(6, 'Must be longer than 6 character')
-    .required('Must confirm the password'),
 });
 
 const useStyles = makeStyles((theme) => ({
@@ -38,6 +35,13 @@ const useStyles = makeStyles((theme) => ({
   hidden: {
     display: 'none',
   },
+
+  errorText: {
+    wordWrap: 'break-word',
+    maxWidth: '250px',
+    textAlign: 'center',
+    alignSelf: 'center',
+  },
 }));
 
 const ValidationMessage = ({ touched, message }) => {
@@ -49,29 +53,21 @@ const ValidationMessage = ({ touched, message }) => {
   );
 };
 
-const SignInForm = ({ setOpen }) => {
+const LoginForm = ({ setOpen }) => {
   const clearModalButton = useRef(null);
   const liberatingFormButton = useRef(null);
 
   const classes = useStyles();
 
-  const [createUserWithEmailAndPassword, user, loading, error] =
-    useCreateUserWithEmailAndPassword(auth);
+  const [signInWithEmailAndPassword, user, loading, error] =
+    useSignInWithEmailAndPassword(auth);
 
   const handleSubmit = (values, setSubmitting) => {
     setSubmitting(true);
 
-    if (
-      JSON.stringify(values.password) !== JSON.stringify(values.confirmPassword)
-    ) {
-      values.confirmPassword = '';
-      setSubmitting(false);
-      return;
-    }
-
     //This function trigger loading, that trigger the useEffect that trigger the hidden button on form
     //That is the way I found to use Formik functions outside the Formik component, all this because this loading hook and not the usual async await and try catch structure
-    createUserWithEmailAndPassword(values.email, values.password);
+    signInWithEmailAndPassword(values.email, values.password);
   };
 
   const clearModal = (values, initialValues, setSubmitting, resetForm) => {
@@ -79,7 +75,6 @@ const SignInForm = ({ setOpen }) => {
       setSubmitting(false);
       resetForm();
       setOpen(false);
-      console.log('User Created');
     }
   };
 
@@ -95,12 +90,12 @@ const SignInForm = ({ setOpen }) => {
   return (
     <>
       <Typography variant="h4" align="center">
-        Sign In
+        Log In
       </Typography>
 
       {/*Formik tutorial: https://www.youtube.com/watch?v=TxEVnaISj1w&t=131s*/}
       <Formik
-        initialValues={{ email: '', password: '', confirmPassword: '' }}
+        initialValues={{ email: '', password: '' }}
         validationSchema={validationSchema}
         onSubmit={(values, { setSubmitting }) => {
           handleSubmit(values, setSubmitting);
@@ -145,29 +140,6 @@ const SignInForm = ({ setOpen }) => {
               message={errors.password}
             />
 
-            <TextField
-              label="confirm password"
-              id="confirmPassword"
-              name="confirmPassword"
-              type="password"
-              value={values.confirmPassword}
-              onBlur={handleBlur}
-              onChange={handleChange}
-              error={
-                touched.confirmPassword &&
-                (values.confirmPassword !== values.password ||
-                  Boolean(errors.confirmPassword))
-              }
-            />
-            <ValidationMessage
-              touched={touched.confirmPassword}
-              message={
-                errors.confirmPassword ||
-                (values.confirmPassword !== values.password &&
-                  'Password should match')
-              }
-            />
-
             <Button
               variant="contained"
               color="primary"
@@ -175,10 +147,12 @@ const SignInForm = ({ setOpen }) => {
               type="submit"
               disabled={isSubmitting}
             >
-              Create Account
+              Login
             </Button>
 
-            <FormHelperText error>{error?.message}</FormHelperText>
+            <FormHelperText error className={classes.errorText}>
+              {error?.message}
+            </FormHelperText>
 
             <Button
               className={classes.hidden}
@@ -204,4 +178,4 @@ const SignInForm = ({ setOpen }) => {
   );
 };
 
-export default SignInForm;
+export default LoginForm;

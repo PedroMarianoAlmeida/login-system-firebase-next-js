@@ -11,7 +11,8 @@ import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import Box from '@material-ui/core/Box';
 
-import SignInForm from './SignInForm';
+import CreateUserForm from './CreateUserForm';
+import LoginForm from './LoginForm';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -110,10 +111,10 @@ export default function LoginSignInModal() {
               </Tabs>
             </AppBar>
             <TabPanel value={value} index={0}>
-              Login Form
+              <LoginForm setOpen={setOpen} />
             </TabPanel>
             <TabPanel value={value} index={1}>
-              <SignInForm setOpen={setOpen} />
+              <CreateUserForm setOpen={setOpen} />
             </TabPanel>
           </div>
         </Fade>
