@@ -18,10 +18,10 @@ const validationSchema = Yup.object().shape({
     .email('Must be a valid email address')
     .required('Must enter a email'),
   password: Yup.string()
-    .min(4, 'Must be longer than 4 character')
+    .min(6, 'Must be longer than 6 character')
     .required('Must enter a password'),
   confirmPassword: Yup.string()
-    .min(4, 'Must be longer than 4 character')
+    .min(6, 'Must be longer than 6 character')
     .required('Must confirm the password'),
 });
 
