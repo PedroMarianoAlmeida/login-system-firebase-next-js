@@ -1,5 +1,3 @@
-import { useEffect, useRef } from 'react';
-
 import Typography from '@material-ui/core/Typography';
 import TextField from '@material-ui/core/TextField';
 import FormHelperText from '@material-ui/core/FormHelperText';
@@ -12,6 +10,7 @@ import * as Yup from 'yup';
 import { useCreateUserWithEmailAndPassword } from 'react-firebase-hooks/auth';
 
 import { auth } from '../config/firebaseConfig';
+import FireBaseAuthResponseHandler from './FireBaseAuthResponseHandler';
 
 const validationSchema = Yup.object().shape({
   email: Yup.string()
@@ -57,9 +56,6 @@ const ValidationMessage = ({ touched, message }) => {
 };
 
 const CreateUserForm = ({ setOpen }) => {
-  const clearModalButton = useRef(null);
-  const liberatingFormButton = useRef(null);
-
   const classes = useStyles();
 
   const [createUserWithEmailAndPassword, user, loading, error] =
@@ -76,28 +72,9 @@ const CreateUserForm = ({ setOpen }) => {
       return;
     }
 
-    //This function trigger loading, that trigger the useEffect that trigger the hidden button on form
-    //That is the way I found to use Formik functions outside the Formik component, all this because this loading hook and not the usual async await and try catch structure
+    //This function trigger the loading hook, when the loading finishing the FireBaseAuthResponseHandler component will trigger
     createUserWithEmailAndPassword(values.email, values.password);
   };
-
-  const clearModal = (values, initialValues, setSubmitting, resetForm) => {
-    if (JSON.stringify(values) !== JSON.stringify(initialValues)) {
-      setSubmitting(false);
-      resetForm();
-      setOpen(false);
-      console.log('User Created');
-    }
-  };
-
-  useEffect(() => {
-    if (!loading) {
-      if (!error) {
-        clearModalButton.current.click();
-      }
-      liberatingFormButton.current.click();
-    }
-  }, [loading]);
 
   return (
     <>
@@ -189,23 +166,15 @@ const CreateUserForm = ({ setOpen }) => {
               {error?.message}
             </FormHelperText>
 
-            <Button
-              className={classes.hidden}
-              onClick={() =>
-                clearModal(values, initialValues, setSubmitting, resetForm)
-              }
-              ref={clearModalButton}
-            >
-              Clear Modal (hidden)
-            </Button>
-
-            <Button
-              className={classes.hidden}
-              onClick={() => setSubmitting(false)}
-              ref={liberatingFormButton}
-            >
-              Liberating Form (hidden)
-            </Button>
+            <FireBaseAuthResponseHandler
+              loading={loading}
+              error={error}
+              values={values}
+              initialValues={initialValues}
+              setSubmitting={setSubmitting}
+              resetForm={resetForm}
+              setOpen={setOpen}
+            />
           </form>
         )}
       </Formik>
