@@ -9,8 +9,10 @@ const FireBaseAuthResponseHandler = ({
   resetForm,
   setOpen,
 }) => {
+  const isFormFiled = JSON.stringify(values) !== JSON.stringify(initialValues);
+
   const clearModal = () => {
-    if (JSON.stringify(values) !== JSON.stringify(initialValues)) {
+    if (isFormFiled) {
       setSubmitting(false);
       resetForm();
       setOpen(false);
