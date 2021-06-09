@@ -11,7 +11,7 @@ import * as Yup from 'yup';
 
 import { useSignInWithEmailAndPassword } from 'react-firebase-hooks/auth';
 
-import { auth } from '../../../config/firebaseConfig';
+import { auth } from '../config/firebaseConfig';
 
 const validationSchema = Yup.object().shape({
   email: Yup.string()
