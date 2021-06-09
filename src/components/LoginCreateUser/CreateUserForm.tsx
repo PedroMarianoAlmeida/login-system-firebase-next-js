@@ -9,7 +9,7 @@ import * as Yup from 'yup';
 
 import { useCreateUserWithEmailAndPassword } from 'react-firebase-hooks/auth';
 
-import { auth } from '../config/firebaseConfig';
+import { auth } from '../../config/firebaseConfig';
 import FireBaseAuthResponseHandler from './FireBaseAuthResponseHandler';
 
 const validationSchema = Yup.object().shape({

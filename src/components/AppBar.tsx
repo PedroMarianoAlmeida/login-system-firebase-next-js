@@ -5,7 +5,7 @@ import { makeStyles } from '@material-ui/core/styles';
 
 import UserInteraction from './UserInteraction';
 
-const LoginAppBar = ({ appBarHeight }) => {
+const MyAppBar = ({ appBarHeight }) => {
   const useStyles = makeStyles({
     root: {
       height: appBarHeight,
@@ -33,4 +33,4 @@ const LoginAppBar = ({ appBarHeight }) => {
   );
 };
 
-export default LoginAppBar;
+export default MyAppBar;

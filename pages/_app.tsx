@@ -4,7 +4,7 @@ import CssBaseline from '@material-ui/core/CssBaseline';
 import Container from '@material-ui/core/Container';
 import { makeStyles } from '@material-ui/core/styles';
 
-import LoginAppBar from '../src/components/LoginAppBar';
+import MyAppBar from '../src/components/AppBar';
 
 const appBarHeight = '64px';
 
@@ -20,7 +20,7 @@ function MyApp({ Component, pageProps }: AppProps) {
   return (
     <>
       <CssBaseline />
-      <LoginAppBar appBarHeight={appBarHeight} />
+      <MyAppBar appBarHeight={appBarHeight} />
       <Container className={classes.main}>
         <Component {...pageProps} />
       </Container>

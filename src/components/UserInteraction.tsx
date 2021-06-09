@@ -3,7 +3,7 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { auth } from './../../src/config/firebaseConfig';
 
-import LoginSignIn from './LoginSignIn';
+import LoginAndCreateUserModal from './LoginCreateUser/LoginAndCreateUser';
 import UserLogout from './UserLogout';
 
 const UserInteraction = () => {
@@ -16,7 +16,7 @@ const UserInteraction = () => {
       ) : user ? (
         <UserLogout />
       ) : (
-        <LoginSignIn />
+        <LoginAndCreateUserModal />
       )}
     </>
   );
