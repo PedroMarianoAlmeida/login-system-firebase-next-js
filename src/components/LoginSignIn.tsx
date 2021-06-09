@@ -63,7 +63,7 @@ function a11yProps(index: any) {
   };
 }
 
-export default function LoginSignInModal() {
+export default function LoginSignIn() {
   const classes = useStyles();
   const [open, setOpen] = useState(false);
 

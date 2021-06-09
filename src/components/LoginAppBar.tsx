@@ -1,10 +1,9 @@
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
-
 import { makeStyles } from '@material-ui/core/styles';
 
-import LoginSignInModal from './LoginSignInModal';
+import UserInteraction from './UserInteraction';
 
 const LoginAppBar = ({ appBarHeight }) => {
   const useStyles = makeStyles({
@@ -27,7 +26,7 @@ const LoginAppBar = ({ appBarHeight }) => {
       <AppBar className={classes.root}>
         <Toolbar className={classes.menu}>
           <Typography>Logo</Typography>
-          <LoginSignInModal />
+          <UserInteraction />
         </Toolbar>
       </AppBar>
     </>
